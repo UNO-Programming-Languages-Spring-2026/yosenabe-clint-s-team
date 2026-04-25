@@ -1,11 +1,19 @@
-%% Your code here
-%numbers move only in straight lines, all numbers must be in areas at the end
 
-%each in each target atom, either the x == XX or Y == YY
-%target(X, Y, XX, YY) :- number(X, Y, Z), area(XX, YY, C).
-5 { target(X, Y, XX, YY) : number(X, Y, Z), area(XX, YY, C) }.
+%1 { target(X, Y, XX, YY) : area(XX, YY, Z) } 1 :- number(X, Y, _).
+%:- target(X, Y, XX, YY), target(X, Y, XX1, YY1), (XX, YY) != (XX1, YY1).
+%target(X, Y, XX, YY) :- cell(X, Y), cell(XX, YY), (X, Y) != (XX, YY).
+%achieved: every target moves a cell to a different cell
+%1 { target(X, Y, XX, YY) : area(XX, YY, _) } 1 :- number(X, Y, _).
+%1 { target(X, Y, XX, YY) : number(X, Y, _) } :- area(XX, YY, _).
 
-%each area must have one moved number == no area can be empty
-%moved numbers must not cross paths
-%numbers in area must sum to goal
+
+1 { target(X, Y, XX, YY) : area(XX, YY, _) } 1 :- number(X, Y, _).
+
+%:- target(X, _, XX, YY), target(X1, _, XX, YY), X != X1.
+%:- target(_, Y, XX, YY), target(_, Y1, XX, YY), Y != Y1.
+%achieved: one to one number to area
+
+:- target(X, Y, XX, YY), X != XX, Y != YY.
+%achieved: numbers move in straight line
+
 #show target/4.

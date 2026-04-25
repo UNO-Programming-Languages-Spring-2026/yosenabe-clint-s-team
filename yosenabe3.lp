@@ -1,35 +1,20 @@
-
-%1 { target(X, Y, XX, YY) : area(XX, YY, Z) } 1 :- number(X, Y, _).
-%:- target(X, Y, XX, YY), target(X, Y, XX1, YY1), (XX, YY) != (XX1, YY1).
-%target(X, Y, XX, YY) :- cell(X, Y), cell(XX, YY), (X, Y) != (XX, YY).
-%achieved: every target moves a cell to a different cell
-%1 { target(X, Y, XX, YY) : area(XX, YY, _) } 1 :- number(X, Y, _).
-%1 { target(X, Y, XX, YY) : number(X, Y, _) } :- area(XX, YY, _).
-
-
 1 { target(X, Y, XX, YY) : area(XX, YY, _) } 1 :- number(X, Y, _).
-
-%:- target(X, _, XX, YY), target(X1, _, XX, YY), X != X1.
-%:- target(_, Y, XX, YY), target(_, Y1, XX, YY), Y != Y1.
-%achieved: one to one number to area
+%achieved: each number gets moved to exactly one area
 
 :- target(X, Y, XX, YY), X != XX, Y != YY.
 %achieved: numbers move in straight line
 
-%each area has at least one number in it
-% area(1,2,3) area(1,3,3) target(_, _, 1, 3)
-%:- area(XX, YY, N), area(XX1, YY1, N), (XX, YY) != (XX1, YY1), not target(_, _, XX1, YY1).
-%:- area(_, _, N), not 1 { area(XX, YY, N): target(_, _, XX, YY) }.
-%an N val exists for which no area(XX, YY, N) has a target(_, _, XX, YY)
-%:- area(_, _, N), not 1 { target(_, _, XX, YY) : area(XX, YY, N) }.
 :- area(_, _, N), #count { XX, YY : target(_, _, XX, YY), area(XX, YY, N) } < 1.
 %achieved: each area has at least one number in it
 
-%target(1, 1, 1, 3) target(2, 2, 1, 2)
-% range (1) (1, 2, 3) range (1, 2) (2)
-crossed(X, Y, N, M, NN, MM) :- target(N, M, NN, MM), N <= NN, M <= MM, X = N..NN, Y = M..MM.
-crossed(X, Y, N, M, NN, MM) :- target(N, M, NN, MM), N > NN, M > MM, X = NN..N, Y = MM..M.
-:- crossed(X, Y, _, _, _, _), #count {X, Y : crossed(X, Y, _, _, _, _)} > 1.
+crossed(X, Y, N, M, NN, MM) :- target(N, M, NN, MM), N != NN, N < NN, X = N..NN, Y = M.
+crossed(X, Y, N, M, NN, MM) :- target(N, M, NN, MM), N != NN, N > NN, X = NN..N, Y = M.
+crossed(X, Y, N, M, NN, MM) :- target(N, M, NN, MM), M != MM, M < MM, Y = M..MM, X = N.
+crossed(X, Y, N, M, NN, MM) :- target(N, M, NN, MM), M != MM, M > MM, Y = MM..M, X = N.
+:- crossed(X, Y, N, M, NN, MM), crossed(X, Y, U, I, UU, II), N != U.
+:- crossed(X, Y, N, M, NN, MM), crossed(X, Y, U, I, UU, II), M != I.
+:- crossed(X, Y, N, M, NN, MM), crossed(X, Y, U, I, UU, II), NN != UU.
+:- crossed(X, Y, N, M, NN, MM), crossed(X, Y, U, I, UU, II), MM != II.
+%achieved: paths cant cross
 
 #show target/4.
-%#show crossed/6.
