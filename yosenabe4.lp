@@ -1,10 +1,6 @@
 1 { target(X, Y, XX, YY) : area(XX, YY, _) } 1 :- number(X, Y, _).
 %achieved: each number gets moved to exactly one area
 
-:- target(X, _, XX, YY), target(X1, _, XX, YY), X != X1.
-:- target(_, Y, XX, YY), target(_, Y1, XX, YY), Y != Y1.
-%achieved: one to one number to area
-
 :- target(X, Y, XX, YY), X != XX, Y != YY.
 %achieved: numbers move in straight line
 
@@ -21,11 +17,11 @@ crossed(X, Y, N, M, NN, MM) :- target(N, M, NN, MM), M != MM, M > MM, Y = MM..M,
 :- crossed(X, Y, N, M, NN, MM), crossed(X, Y, U, I, UU, II), MM != II.
 %achieved: paths cant cross
 
-sum(A, S) :- area(_, _, A), S = #sum { N : number(X, Y, N), target(X, Y, XX, YY), area(XX, YY, A) }.
+sum(A, S) :- goal(A, _), S = #sum { N, X, Y : number(X, Y, N), target(X, Y, XX, YY), area(XX, YY, A)}.
 
-%:- sum(A, S), A != S.
+:- goal(A, G), sum(A, S), G != S.
 
-#show number/3.
+%#show number/3.
 #show target/4.
-#show sum/2.
-#show area/3.
+%#show sum/2.
+%#show area/3.
